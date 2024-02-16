@@ -16,6 +16,9 @@ bot = commands.Bot(command_prefix=';', intents=intents)
 
 # Variables and stuff
 connected = False
+message_counter = 0 
+message_odds = 10 # THIS IS THE AMOUNT OF MESSAGES BEFORE A MESSAGE GOES TO THE KEYBOARD
+# ADD AND REMOVE AS YOU LIKE BUT MAKE SURE IT IS DEFINED IN THE KEYBOARD LIBRARY
 keys = [
     "esc", "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12",
     "~", "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=", "backspace",
@@ -33,14 +36,12 @@ keys = [
     "sleep", "power", "wake", "monbrightnessup", "monbrightnessdown", "monbrightnessauto",
     "f13", "f14", "f15", "f16", "f17", "f18", "f19", "f20", "f21", "f22", "f23", "f24"
 ]
-customkeys = []
 embed = discord.embeds.Embed(title="InputsBot - Discord fuck up your pc", 
                                  description='''**Clarification**\n
                                  This bot will give users with a specific role the ability to send inputs to YOUR pc using YOUR keyboard virtually.\n
                                  **Usage**\n
                                  ;info - Shows this prompt\n
-                                 ;cmds - Shows all keys users can use\n
-                                 ;customcmds string key bool use_normal_cmds? - Add keys and specify if only to use those\n
+                                 ;cmds - Shows all keys users can use\n\n
                                  ;toggle - Enable/Disable the keyboard inputs (starts as disabled)
                                  ;string key (optional, max 5) int seconds - Send a command to the keyboard''')
 
@@ -73,15 +74,7 @@ async def info(ctx):
 # cmds Command
 @bot.command(name='cmds')
 async def cmds(ctx):
-    await ctx.reply(f"Basic: {keys}")
-    await ctx.reply(f"Custom: {customkeys}")
-
-# Add custom keys
-@bot.command(name='customcmds')
-async def customcmds(ctx, customkeylist):
-    for key in customkeys:
-        customkeys.append(key)
-        await ctx.reply(f"Added: {key}")
+    await ctx.reply(f"Commands: {keys}")
 
 # Toggle inputs
 @bot.command(name='toggle')
@@ -95,7 +88,7 @@ async def toggle(ctx):
         await ctx.reply("Enabled.")
 
 # Send key to keyboard
-async def send(ctx, key, time):
+async def send(key, time):
     if time == 0:
         keyboard.press_and_release(key)
     else:
@@ -115,16 +108,17 @@ async def on_message(msg):
             print(stripped_msg)
             for key in keys:
                 if stripped_msg == key:
-                    # Assures there's a space
-                    numbers = msg.content[len(key) +  2:]
-                    if numbers.isdigit() and int(numbers) <=  2:
-                        print(f"{msg.author}: {stripped_msg} - {numbers}")
-                        await send(msg, stripped_msg, int(numbers))
-                        break
-                    else:
-                        print(f"{msg.author}: {stripped_msg} - 0")
-                        await send(msg, stripped_msg,  0)
-                        break
+                    message_counter+= 1
+                    if message_counter == message_odds:
+                        numbers = msg.content[len(key) +  2:]
+                        if numbers.isdigit() and int(numbers) <=  2:
+                            print(f"{msg.author}: {stripped_msg} - {numbers}")
+                            await send(msg, stripped_msg, int(numbers))
+                            break
+                        else:
+                            print(f"{msg.author}: {stripped_msg} - 0")
+                            await send(stripped_msg,  0)
+                            break
 
     await bot.process_commands(msg)
 
