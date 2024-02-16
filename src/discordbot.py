@@ -6,6 +6,7 @@ import keyboard
 import time
 import os
 import random
+import json
 load_dotenv('.env')
 
 # Setup bot
