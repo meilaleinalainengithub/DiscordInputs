@@ -3,10 +3,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import keyboard
-import time
 import os
 import random
-import json
 load_dotenv('.env')
 
 # Setup bot
