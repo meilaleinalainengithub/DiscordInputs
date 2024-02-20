@@ -122,4 +122,3 @@ async def on_message(msg):
 
 # Activate bot
 bot.run(os.getenv('DISCORD_TOKEN'))
-# https://discord.com/api/oauth2/authorize?client_id=1207707523549896704&permissions=2048&scope=bot
