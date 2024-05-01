@@ -5,4 +5,4 @@ This could be dangerous depending on who you trust this with.
 
 - Requirements in requirements.txt
 - Make sure to run the "RUNME.bat" to run everything correctly
-- Create and input your discord bot token at the bottom of the .py file
+- Create and input your discord bot token in the ".env"
